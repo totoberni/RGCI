@@ -3,7 +3,7 @@ import time
 import sys
 import pickle
 from datetime import datetime
-from api_request_utils import get_response
+from RGCI.src.api.api_request_utils import get_response
 
 
 def get_extract_prompt(query_type):

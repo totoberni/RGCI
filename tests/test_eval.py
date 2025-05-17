@@ -1,7 +1,7 @@
 import os
 import sys
 from datetime import datetime
-from settings import get_test_settings
+from RGCI.config.settings import get_test_settings
 from test_utils import test_llm
 from eval_utils import extract_answer, eval_llm
 

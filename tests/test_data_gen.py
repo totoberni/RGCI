@@ -5,7 +5,7 @@ import graph_utils
 import pickle
 import os
 import sys
-from settings import get_data_gen_settings
+from RGCI.config.settings import get_data_gen_settings
 from public_utils import int2two_char_str
 from datetime import datetime
 

@@ -2,9 +2,9 @@ import pickle
 import json
 import time
 import sys
-from conf_utils import dict2text as conf_d2t
-from cf_utils import dict2text as cf_d2t
-from api_request_utils import get_response
+from RGCI.src.utils.conf_utils import dict2text as conf_d2t
+from RGCI.src.utils.cf_utils import dict2text as cf_d2t
+from RGCI.src.api.api_request_utils import get_response
 from datetime import datetime
 
 
