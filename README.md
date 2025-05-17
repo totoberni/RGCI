@@ -1,38 +1,76 @@
 # RGCI - Reproducing GCI: A Benchmarking Framework for Causal Reasoning
 
-This repository contains a framework for benchmarking Large Language Models (LLMs) on causal reasoning tasks. It generates synthetic causal graphs, creates test queries, evaluates model performance, and analyzes results.
+This repository implements the replication of the GCI (Graph-based Causal Inference) benchmark introduced by Chen Wang et al. in their paper ["Do LLMs Have the Generalization Ability in Conducting Causal Inference?"](https://arxiv.org/abs/2410.11385). The framework systematically evaluates Large Language Models (LLMs) on causal reasoning tasks by generating synthetic causal graphs, creating test queries, evaluating model performance, and analyzing results.
 
 ## Directory Structure
 
 ```
 RGCI/
-├── .git/                      # Git repository data
-├── generated_data/            # Output directory for generated test data
-│   ├── graph_png/             # Visualizations of generated causal graphs
-│   └── pickle/                # Serialized data for graphs, queries, and node names
-├── name_data/                 # Domain-specific entity names for causal graph nodes
-│   ├── bio.txt                # Biology domain entity names
-│   ├── che.txt                # Chemistry domain entity names
-│   ├── eco.txt                # Economics domain entity names
-│   └── phy.txt                # Physics domain entity names
-├── .gitattributes             # Git attributes configuration
-├── api_request_utils.py       # Utilities for making API requests to LLMs
-├── cf_utils.py                # Counterfactual reasoning utilities
-├── conf_utils.py              # Confounding/causal relationship utilities
-├── eval_utils.py              # Evaluation utilities for LLM responses
-├── graph_utils.py             # Graph generation and manipulation utilities
-├── public_utils.py            # General utility functions
-├── settings.py                # Configuration settings for tests and data generation
-├── test_data_gen.py           # Test data generation script
-├── test_eval.py               # Test evaluation script
-└── test_utils.py              # Testing utilities
+├── config/                    # Configuration settings
+│   ├── __init__.py            # Package initialization
+│   ├── requirements.txt       # Package dependencies 
+│   └── settings.py            # Configuration parameters
+├── data/                      # Input data for the system
+│   ├── generated_data/        # Generated intermediate data
+│   │   └── pickle/            # Serialized data files
+│   └── name_data/             # Domain-specific entity names for causal graph nodes
+├── scripts/                   # Scripts for running various system components
+│   ├── run_data_gen.py        # Data generation script
+│   ├── run_evaluation.py      # Evaluation script
+│   ├── run_rgci.py            # Main entry point
+│   ├── run_tests.py           # Test runner
+│   ├── setup_env.bat          # Windows environment setup
+│   └── setup_env.sh           # Unix environment setup
+├── src/                       # Source code organized as Python packages
+│   ├── __init__.py            # Package initialization
+│   ├── api/                   # API integration with LLMs
+│   ├── core/                  # Core functionality for causal reasoning
+│   ├── evaluation/            # Evaluation utilities
+│   └── utils/                 # General utility functions
+├── tests/                     # Test files
+│   ├── __init__.py            # Package initialization
+│   ├── test_data_gen.py       # Test data generation
+│   ├── test_eval.py           # Test evaluation
+│   └── test_utils.py          # Testing utilities
+└── .gitattributes             # Git attributes configuration
 ```
 
 ## Environment Setup
 
-### Sample .env File
+### Requirements
 
-Create a `.env` file in the RGCI directory with the following contents:
+The requirements file is located in the `config` directory. Install dependencies using:
+
+```bash
+pip install -r config/requirements.txt
+```
+
+The requirements include:
+```
+numpy>=1.24.0
+graphviz>=0.20.1
+matplotlib>=3.7.1
+pandas>=2.0.0
+python-dotenv>=1.0.0
+```
+
+### Environment Configuration
+
+Use the provided setup scripts to initialize the environment:
+
+**For Windows:**
+```bash
+scripts/setup_env.bat
+```
+
+**For Unix/Linux/MacOS:**
+```bash
+./scripts/setup_env.sh
+```
+
+### API Configuration
+
+Create a `.env` file in the `config` directory with your API keys and settings:
 
 ```
 # OpenAI API Keys
@@ -48,53 +86,47 @@ CONTENT_TYPE=application/json
 OUTPUT_PATH=./generated_data
 ```
 
-You can save this as `.env.example` in your repository and instruct users to copy it to `.env` with their actual API keys.
+## Usage
 
-### Requirements
+### Main Entry Point
 
-Create a `requirements.txt` file in the RGCI directory with the following dependencies:
-
-```
-numpy>=1.24.0
-graphviz>=0.20.1
-matplotlib>=3.7.1
-pandas>=2.0.0
-python-dotenv>=1.0.0
-http.client
-json
-pickle
-os
-sys
-datetime
-random
-string
-```
-
-## Use Cases and Documentation
-
-### 1. Generate Test Data
-
-The framework generates causal graphs with various configurations, creates node names with domain-specific terminology, and formulates causal reasoning queries.
+Use the main script for standard operations:
 
 ```bash
-python test_data_gen.py <settings_index>
+python scripts/run_rgci.py [generate|evaluate|both] <settings_index>
 ```
 
-Where `<settings_index>` is an integer referring to the configuration in `settings.py`.
+Where:
+- First argument specifies what action to perform: generate data, evaluate models, or both.
+- `<settings_index>` is an integer referring to the configuration in `config/settings.py`.
 
-### 2. Run Tests on LLMs
+### Individual Operations
 
-Test LLMs on causal reasoning tasks including:
-- Causal path identification
-- Confounding control
-- Counterfactual inference
-- Factual inference
+#### 1. Generate Test Data
+
+Generate causal graphs with various configurations, create node names with domain-specific terminology, and formulate causal reasoning queries:
 
 ```bash
-python test_eval.py <settings_index>
+python scripts/run_data_gen.py <settings_index>
 ```
 
-### 3. Task Types
+#### 2. Run Evaluations on LLMs
+
+Test LLMs on causal reasoning tasks:
+
+```bash
+python scripts/run_evaluation.py <settings_index>
+```
+
+### Running Tests
+
+To run tests for the framework:
+
+```bash
+python scripts/run_tests.py [data_gen|eval|all]
+```
+
+## Task Types
 
 The system supports four main causal reasoning task types:
 - **conf_ce_path**: Identifying causal paths
@@ -102,15 +134,15 @@ The system supports four main causal reasoning task types:
 - **cf_f_infer**: Factual inference
 - **cf_cf_infer**: Counterfactual inference
 
-### 4. Data Generation Parameters
+## Data Generation Parameters
 
-The data generation process can be configured through `settings.py`:
+The data generation process can be configured through `config/settings.py`:
 - Graph shapes and complexity
 - Number of nodes and edges
 - Connection probabilities
 - Domain-specific naming conventions
 
-### 5. Evaluation Process
+## Evaluation Process
 
 1. Generate causal graphs and test queries
 2. Send prompts to LLMs via API
@@ -120,30 +152,4 @@ The data generation process can be configured through `settings.py`:
 
 ## API Integration
 
-The system is designed to work with OpenAI API-compatible models. Configure the API settings in the `.env` file and in `settings.py` before running tests.
-
-### Configuring API Keys in settings.py
-
-To use the framework, you need to update the API keys in `settings.py`:
-
-```python
-{
-    "gpt-3.5-turbo": {
-        "enable": True,
-        "test_api_key": "Bearer YOUR_OPENAI_API_KEY",  # Replace with your key
-        "extractor_api_key": "Bearer YOUR_EXTRACTOR_API_KEY",  # Replace with your key
-        # other settings...
-    }
-}
-```
-
-## Code Overview
-
-- **api_request_utils.py**: Handles API communication with LLM providers
-- **conf_utils.py**: Generates and processes confounding/causal relationship queries
-- **cf_utils.py**: Generates and processes counterfactual reasoning queries
-- **graph_utils.py**: Creates and manipulates directed acyclic graphs (DAGs)
-- **public_utils.py**: Provides general utility functions for graph visualization, path finding, and naming
-- **test_data_gen.py**: Orchestrates the generation of test data based on configuration
-- **test_eval.py**: Runs the evaluation pipeline on LLM responses
-- **eval_utils.py**: Analyzes and scores model responses against ground truth 
+The system is designed to work with OpenAI API-compatible models. Configure the API settings in the `.env` file in the `config` directory and ensure the model configurations in `config/settings.py` are properly set up. 

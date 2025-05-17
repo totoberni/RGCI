@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
 """
-Test script for data generation
+Script to generate test data for causal reasoning evaluations
 """
 import pickle
 import os
 import sys
 from datetime import datetime
+from dotenv import load_dotenv
 
 # Add the parent directory to the Python path to enable imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Try to load environment variables from config directory
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', '.env')
+if os.path.exists(env_path):
+    load_dotenv(env_path)
 
 from src.utils.public_utils import int2two_char_str, draw_graph, node_name_gen_specific, node_name_gen
 from src.core.conf_utils import conf_qa_gen
 from src.core.cf_utils import cf_qa_gen
 from src.core.graph_utils import dag_gen
-from config.settings import get_data_gen_settings, GENERATED_DATA_DIR, PICKLE_DIR
+from config.settings import get_data_gen_settings, GENERATED_DATA_DIR, PICKLE_DIR, GRAPH_PNG_DIR
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python test_data_gen.py <settings_index>")
+        print("Usage: python run_data_gen.py <settings_index>")
         sys.exit(1)
-
+    
     settings_index = int(sys.argv[1])
     
     (
@@ -37,7 +43,7 @@ def main():
     ) = get_data_gen_settings(settings_index).values()
 
     # Ensure output directories exist
-    os.makedirs(GENERATED_DATA_DIR + "/graph_png", exist_ok=True)
+    os.makedirs(GRAPH_PNG_DIR, exist_ok=True)
     os.makedirs(PICKLE_DIR, exist_ok=True)
     
     graph_n = len(graph_shape) * len(graph_p) * len(path_iter_n) * graph_n_per_condition
@@ -70,7 +76,7 @@ def main():
                         g_s, g_p, p_itn
                     )
                     draw_graph(
-                        matrix, node_list, os.path.join(GENERATED_DATA_DIR, "graph_png", gid)
+                        matrix, node_list, os.path.join(GRAPH_PNG_DIR, gid)
                     )
                     graph_item = {
                         "gid": gid,
@@ -130,4 +136,4 @@ def main():
     print(datetime.now(), "All finished.", flush=True)
 
 if __name__ == "__main__":
-    main()
+    main() 

@@ -2,10 +2,15 @@ import pickle
 import json
 import time
 import sys
-from RGCI.src.utils.conf_utils import dict2text as conf_d2t
-from RGCI.src.utils.cf_utils import dict2text as cf_d2t
-from RGCI.src.api.api_request_utils import get_response
+import os
 from datetime import datetime
+
+# Add the parent directory to the Python path to enable imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from src.utils.conf_utils import dict2text as conf_d2t
+from src.utils.cf_utils import dict2text as cf_d2t
+from src.api.api_request_utils import get_response
 
 
 def query_filter(qid, gs=None, gp=None, gi=None, f_infer_history=[]):

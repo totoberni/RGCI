@@ -1,3 +1,17 @@
+import os
+
+# Define paths relative to project root
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
+GENERATED_DATA_DIR = os.path.join(DATA_DIR, 'generated_data')
+NAME_DATA_DIR = os.path.join(DATA_DIR, 'name_data')
+PICKLE_DIR = os.path.join(GENERATED_DATA_DIR, 'pickle')
+GRAPH_PNG_DIR = os.path.join(GENERATED_DATA_DIR, 'graph_png')
+
+# Ensure directories exist
+os.makedirs(PICKLE_DIR, exist_ok=True)
+os.makedirs(GRAPH_PNG_DIR, exist_ok=True)
+
 def get_test_settings(idx):
     settings = [
         {
