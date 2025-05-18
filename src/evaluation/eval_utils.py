@@ -4,7 +4,7 @@ import sys
 import pickle
 from datetime import datetime
 from src.api.api_request_utils import get_response
-from config.settings import DEFAULT_EXTRACTOR_MODEL
+from src.core.settings import DEFAULT_EXTRACTOR_MODEL
 
 
 def get_extract_prompt(query_type):

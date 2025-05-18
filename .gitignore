@@ -7,3 +7,4 @@
 *.pickle
 *pickle*
 *sk*-*
+*__pycache__*

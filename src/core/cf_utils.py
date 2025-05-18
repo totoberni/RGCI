@@ -1,6 +1,6 @@
 import random
 import numpy as np
-import public_utils
+from src.utils import public_utils
 
 
 def dict2text(node_name, cf_qa_d, adj_mat):

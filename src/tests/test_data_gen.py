@@ -7,14 +7,16 @@ import os
 import sys
 from datetime import datetime
 
-# Add the parent directory to the Python path to enable imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add the project root to the Python path to enable imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
 from src.utils.public_utils import int2two_char_str, draw_graph, node_name_gen_specific, node_name_gen
 from src.core.conf_utils import conf_qa_gen
 from src.core.cf_utils import cf_qa_gen
 from src.core.graph_utils import dag_gen
-from config.settings import get_data_gen_settings, GENERATED_DATA_DIR, PICKLE_DIR
+from src.core.settings import get_data_gen_settings
+from src.core.paths import GENERATED_DATA_DIR, PICKLE_DIR, GRAPH_PNG_DIR
 
 
 def main():

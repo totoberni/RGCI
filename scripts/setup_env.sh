@@ -16,7 +16,7 @@ fi
 
 # Activate virtual environment
 echo -e "${YELLOW}Activating virtual environment...${NC}"
-source venv/bin/activate 2>/dev/null || source venv/Scripts/activate 2>/dev/null
+source ./venv/bin/activate 2>/dev/null || source ./venv/Scripts/activate 2>/dev/null || ./venv/Scripts/activate 2>/dev/null
 
 if [ $? -ne 0 ]; then
     echo "Failed to activate virtual environment. Please check your Python installation."

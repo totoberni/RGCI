@@ -53,7 +53,7 @@ def get_test_settings(idx):
             }
         },
         {
-            "gpt-3.5-turbo": {  # 1
+            "gpt-3.5-turbo-0125": {  # 1
                 "enable": True,
                 "test_api_key": DEFAULT_API_KEY,
                 "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,

@@ -1,4 +1,4 @@
-import public_utils
+from src.utils import public_utils
 import numpy as np
 
 

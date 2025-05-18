@@ -6,12 +6,14 @@ import os
 import sys
 from datetime import datetime
 
-# Add the parent directory to the Python path to enable imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add the project root to the Python path to enable imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
 from src.evaluation.eval_utils import extract_answer, eval_llm
 from src.tests.test_utils import test_llm
-from config.settings import get_test_settings, GENERATED_DATA_DIR, PICKLE_DIR, DEFAULT_EXTRACTOR_MODEL
+from src.core.settings import get_test_settings, DEFAULT_EXTRACTOR_MODEL
+from src.core.paths import GENERATED_DATA_DIR, PICKLE_DIR
 
 
 def main():

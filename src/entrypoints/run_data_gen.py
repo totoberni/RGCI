@@ -9,10 +9,11 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Add the project root to the Python path to enable imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
 # Try to load environment variables from config directory
-env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'config', '.env')
+env_path = os.path.join(project_root, 'config', '.env')
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
@@ -21,7 +22,6 @@ from src.core.conf_utils import conf_qa_gen
 from src.core.cf_utils import cf_qa_gen
 from src.core.graph_utils import dag_gen
 from src.core.settings import get_data_gen_settings, GENERATED_DATA_DIR, PICKLE_DIR, GRAPH_PNG_DIR
-
 
 def main():
     if len(sys.argv) < 2:

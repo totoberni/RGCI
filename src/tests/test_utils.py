@@ -5,13 +5,14 @@ import sys
 import os
 from datetime import datetime
 
-# Add the parent directory to the Python path to enable imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add the project root to the Python path to enable imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
 from src.core.conf_utils import dict2text as conf_d2t
 from src.core.cf_utils import dict2text as cf_d2t
 from src.api.api_request_utils import get_response
-from config.settings import DEFAULT_EXTRACTOR_MODEL
+from src.core.settings import DEFAULT_EXTRACTOR_MODEL
 
 
 def query_filter(qid, gs=None, gp=None, gi=None, f_infer_history=[]):
