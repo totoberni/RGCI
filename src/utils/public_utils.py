@@ -3,6 +3,8 @@ import random
 import string
 import numpy as np
 import sys
+import os
+from src.core.paths import NAME_DATA_DIR
 
 
 # Visualize graph by graphviz
@@ -62,7 +64,7 @@ def random_str_gen(n):
 
 
 def node_name_gen(specific_name, name_type):
-    file_path = "./name_data/" + name_type + ".txt"
+    file_path = os.path.join(NAME_DATA_DIR, name_type + ".txt")
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     noun, change = [], []

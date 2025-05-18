@@ -6,16 +6,15 @@ import pickle
 import os
 import sys
 from datetime import datetime
-from dotenv import load_dotenv
+from pathlib import Path
 
 # Add the project root to the Python path to enable imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 
-# Try to load environment variables from config directory
-env_path = os.path.join(project_root, 'config', '.env')
-if os.path.exists(env_path):
-    load_dotenv(env_path)
+# Load environment variables from the correct location
+from src.utils.env_utils import load_env_variables
+load_env_variables()
 
 from src.utils.public_utils import int2two_char_str, draw_graph, node_name_gen_specific, node_name_gen
 from src.core.conf_utils import conf_qa_gen

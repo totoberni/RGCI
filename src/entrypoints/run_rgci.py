@@ -5,16 +5,14 @@ Main entry point script for the RGCI framework
 import sys
 import os
 import argparse
-from dotenv import load_dotenv
 
 # Add the project root to the Python path to enable imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 
-# Try to load environment variables from config directory
-env_path = os.path.join(project_root, 'config', '.env')
-if os.path.exists(env_path):
-    load_dotenv(env_path)
+# Load environment variables from the correct location
+from src.utils.env_utils import load_env_variables
+load_env_variables()
 
 def print_header():
     """Print a header for the script"""

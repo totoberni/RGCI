@@ -1,10 +1,10 @@
 import os
 import json
 from openai import OpenAI
-from dotenv import load_dotenv
+from src.utils.env_utils import load_env_variables
 
-# Load environment variables in case they haven't been loaded already
-load_dotenv()
+# Load environment variables from the correct location
+load_env_variables()
 
 # Get environment variables with fallbacks
 API_HOST = os.environ.get('API_HOST', 'api.openai.com')

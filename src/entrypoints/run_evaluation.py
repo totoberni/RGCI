@@ -7,16 +7,14 @@ import sys
 import pickle
 import json
 from datetime import datetime
-from dotenv import load_dotenv
 
 # Add the project root to the Python path to enable imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 
-# Try to load environment variables from config directory
-env_path = os.path.join(project_root, 'config', '.env')
-if os.path.exists(env_path):
-    load_dotenv(env_path)
+# Load environment variables from the correct location
+from src.utils.env_utils import load_env_variables
+load_env_variables()
 
 from src.tests.test_utils import test_llm
 from src.evaluation.eval_utils import extract_answer, eval_llm
