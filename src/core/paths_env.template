@@ -1,0 +1,13 @@
+# OpenAI API Keys
+OPENAI_API_KEY=your-openai-api-key-here
+OPENAI_API_KEY_EXTRACTOR=your-openai-api-key-for-extraction-here
+
+# Path Configuration
+# You can specify a custom data directory path (absolute or relative to project root)
+# OUTPUT_PATH=custom/path/to/data
+
+# Example: Output data to a directory outside the project
+# OUTPUT_PATH=C:/Users/username/Documents/RGCI_data
+
+# Example: Output data to a directory inside the project
+# OUTPUT_PATH=data 

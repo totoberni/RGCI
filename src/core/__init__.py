@@ -7,12 +7,16 @@ from src.core.cf_utils import cf_qa_gen, dict2text as cf_dict2text
 from src.core.settings import (
     get_test_settings,
     get_data_gen_settings,
+)
+from src.core.paths import (
     PROJECT_ROOT,
     DATA_DIR,
     GENERATED_DATA_DIR,
     NAME_DATA_DIR,
     PICKLE_DIR,
-    GRAPH_PNG_DIR
+    GRAPH_PNG_DIR,
+    RESULT_DIR,
+    ensure_directories
 )
 
 __all__ = [
@@ -28,5 +32,7 @@ __all__ = [
     'GENERATED_DATA_DIR',
     'NAME_DATA_DIR',
     'PICKLE_DIR',
-    'GRAPH_PNG_DIR'
+    'GRAPH_PNG_DIR',
+    'RESULT_DIR',
+    'ensure_directories'
 ] 

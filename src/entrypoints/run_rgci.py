@@ -8,10 +8,10 @@ import argparse
 from dotenv import load_dotenv
 
 # Add the parent directory to the Python path to enable imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # Try to load environment variables from config directory
-env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', '.env')
+env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'config', '.env')
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
@@ -38,18 +38,22 @@ def main():
     if args.action in ['generate', 'both']:
         print(f"Generating test data with settings index {args.settings_index}...")
         # Import and run data generation with settings index
-        import scripts.run_data_gen
+        from src.entrypoints.run_data_gen import main as data_gen_main
         # Set sys.argv for the import
+        orig_argv = sys.argv.copy()
         sys.argv = ['run_data_gen.py', str(args.settings_index)]
-        scripts.run_data_gen.main()
+        data_gen_main()
+        sys.argv = orig_argv
     
     if args.action in ['evaluate', 'both']:
         print(f"Running evaluation with settings index {args.settings_index}...")
         # Import and run evaluation with settings index
-        import scripts.run_evaluation
+        from src.entrypoints.run_evaluation import main as eval_main
         # Set sys.argv for the import
+        orig_argv = sys.argv.copy()
         sys.argv = ['run_evaluation.py', str(args.settings_index)]
-        scripts.run_evaluation.main()
+        eval_main()
+        sys.argv = orig_argv
     
     print("\nCompleted!")
 

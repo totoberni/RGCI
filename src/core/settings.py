@@ -1,16 +1,23 @@
 import os
+from dotenv import load_dotenv
 
-# Define paths relative to project root
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-DATA_DIR = os.path.join(PROJECT_ROOT, 'src', 'data')
-GENERATED_DATA_DIR = os.path.join(DATA_DIR, 'generated_data')
-NAME_DATA_DIR = os.path.join(DATA_DIR, 'name_data')
-PICKLE_DIR = os.path.join(GENERATED_DATA_DIR, 'pickle')
-GRAPH_PNG_DIR = os.path.join(GENERATED_DATA_DIR, 'graph_png')
+# Load environment variables in case they haven't been loaded already
+load_dotenv()
+
+# Import paths from the paths module
+from src.core.paths import (
+    PROJECT_ROOT,
+    DATA_DIR,
+    GENERATED_DATA_DIR,
+    NAME_DATA_DIR,
+    PICKLE_DIR,
+    GRAPH_PNG_DIR,
+    RESULT_DIR,
+    ensure_directories
+)
 
 # Ensure directories exist
-os.makedirs(PICKLE_DIR, exist_ok=True)
-os.makedirs(GRAPH_PNG_DIR, exist_ok=True)
+ensure_directories()
 
 # Get API keys from environment variables with fallbacks to empty strings
 DEFAULT_API_KEY = os.environ.get('OPENAI_API_KEY', '')

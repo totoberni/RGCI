@@ -9,11 +9,11 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Add the parent directory to the Python path to enable imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add the project root to the Python path to enable imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # Try to load environment variables from config directory
-env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', '.env')
+env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'config', '.env')
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
@@ -30,7 +30,7 @@ def run_test_llm(api_key, model, query_type, graph_shape_group, graph_shape, nam
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python run_evaluation.py <settings_index>")
+        print("Usage: python -m src.entrypoints.run_evaluation <settings_index>")
         sys.exit(1)
     
     settings_index = int(sys.argv[1])

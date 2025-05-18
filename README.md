@@ -96,9 +96,26 @@ Create a `.env` file in the `config` directory with your API keys and settings:
 # OpenAI API Keys
 OPENAI_API_KEY=sk-your-openai-api-key
 OPENAI_API_KEY_EXTRACTOR=sk-your-openai-api-key-for-extraction
+
+# Optional: Custom data directory path
+# OUTPUT_PATH=path/to/custom/data/directory
 ```
 
 The setup script will create a template `.env` file that you can customize with your API keys.
+
+### Path Configuration
+
+The framework uses a centralized path management system in `src/core/paths.py`. You can customize where data is stored by setting the `OUTPUT_PATH` environment variable in your `.env` file:
+
+```
+# Store data in a custom location (absolute path)
+OUTPUT_PATH=C:/Users/username/Documents/RGCI_data
+
+# Or use a relative path (relative to project root)
+OUTPUT_PATH=custom_data
+```
+
+If `OUTPUT_PATH` is not specified, data will be stored in the default location at `src/data/`.
 
 ## Usage
 
