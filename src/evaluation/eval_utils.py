@@ -41,9 +41,24 @@ def extract_answer(api_key, model=None, query_type=None, input_json_path=None, o
     # Default to DEFAULT_EXTRACTOR_MODEL if model is not provided
     if model is None:
         model = DEFAULT_EXTRACTOR_MODEL
-        
-    with open(input_json_path, 'r', encoding='utf-8') as f_in:
-        lines = f_in.readlines()
+    
+    # Add retry mechanism for file opening
+    max_file_retries = 10
+    file_retry_count = 0
+    lines = None
+    
+    while file_retry_count < max_file_retries:
+        try:
+            with open(input_json_path, 'r', encoding='utf-8') as f_in:
+                lines = f_in.readlines()
+            break  # Successfully opened the file, exit the retry loop
+        except FileNotFoundError as e:
+            file_retry_count += 1
+            if file_retry_count >= max_file_retries:
+                raise FileNotFoundError(f"Failed to open file after {max_file_retries} attempts: {str(e)}")
+            print(f"File not found, retrying ({file_retry_count}/{max_file_retries}): {input_json_path}")
+            time.sleep(5)  # Wait 5 seconds before retry
+    
     f_out = open(output_json_path, 'w', encoding='utf-8')
     retry_threshold = 3
     global_retry_threshold = retry_threshold * 20
@@ -79,9 +94,8 @@ def extract_answer(api_key, model=None, query_type=None, input_json_path=None, o
                     retry_cnt += 1
                     global_retried_cnt += 1
         
-
-        # print(f"======={res_dict['query_id']}=======", flush=True)
-        # print(f"extracted answer:\n {extracted_text}\n", flush=True)
+        print(f"======={res_dict['query_id']}=======", flush=True)
+        print(f"extracted answer:\n {extracted_text}\n", flush=True)
         res_dict['extracted_answer'] = extracted_text
         f_out.write(json.dumps(res_dict, ensure_ascii=False) + '\n')
         f_out.flush()
@@ -90,7 +104,7 @@ def extract_answer(api_key, model=None, query_type=None, input_json_path=None, o
             sys.exit("Failed to connect to llm api after many retries.")
     
     f_out.close()        
-    # print(datetime.now(), "Answer extraction done.", flush=True)
+    print(datetime.now(), "Answer extraction done.", flush=True)
 
 
 def validate_conf_ctrl(name_list, adj_mat, c2e_noncausal_path, extracted_answer):
@@ -116,7 +130,8 @@ def validate_conf_ctrl(name_list, adj_mat, c2e_noncausal_path, extracted_answer)
     try:
         ctrl_set_str = [s.strip().lower() for s in extracted_answer.split(',')]
         ctrl_set_idx = [name_list.index(f) for f in ctrl_set_str]
-    except:
+    except Exception as e:
+        print(f"Error: {e}", flush=True)
         pass
     ctrl_state = validate_ctrl_set(ctrl_set_idx, c2e_noncausal_path)
 
@@ -129,7 +144,8 @@ def validate_ce_path(name_list, c2e_path, extracted_answer):
     for p in ans_path:
         try:
             ans_path_flat.append([name_list.index(s.strip().lower()) for s in p.split('->')])
-        except:
+        except Exception as e:
+            print(f"Error: {e}", flush=True)
             pass
     
     c2e_path_flat = []
@@ -158,13 +174,15 @@ def validate_cf_tasks(name_list, query_idx, gt_assign, extracted_answer):
                 ans_event_bool.append(False)
             else:
                 ans_event_bool.append(None)
-        except:
+        except Exception as e:
+            print(f"Error: {e}", flush=True)
             pass
     
     ans_idx = []
     try:
         ans_idx = [name_list.index(n) for n in ans_event_name]
-    except:
+    except Exception as e:
+        print(f"Error: {e}", flush=True)
         pass
     result = True
     for i in query_idx:
@@ -195,8 +213,22 @@ def eval_llm(query_type, graph_shape_group, name_type, data_folder, ans_ex_path,
         if name_type != "specific":
             name_type = name_type + "_c"
 
-    with open(ans_ex_path, 'r', encoding='utf-8') as f_in:
-        lines = f_in.readlines()
+    # Add retry mechanism for file opening
+    max_file_retries = 10
+    file_retry_count = 0
+    lines = None
+    
+    while file_retry_count < max_file_retries:
+        try:
+            with open(ans_ex_path, 'r', encoding='utf-8') as f_in:
+                lines = f_in.readlines()
+            break  # Successfully opened the file, exit the retry loop
+        except FileNotFoundError as e:
+            file_retry_count += 1
+            if file_retry_count >= max_file_retries:
+                raise FileNotFoundError(f"Failed to open file after {max_file_retries} attempts: {str(e)}")
+            print(f"File not found, retrying ({file_retry_count}/{max_file_retries}): {ans_ex_path}")
+            time.sleep(5)  # Wait 5 seconds before retry
 
     if query_type[:4] == "conf":
         id_entry = "conf_id"
@@ -214,6 +246,7 @@ def eval_llm(query_type, graph_shape_group, name_type, data_folder, ans_ex_path,
                 query_dict = pickle.load(f_qd)
                 current_qid = query_dict[id_entry]
             except EOFError:
+                print("Query data incompatible.", flush=True)
                 sys.exit("Query data incompatible.")
 
         if current_gid != required_gid:
@@ -227,6 +260,7 @@ def eval_llm(query_type, graph_shape_group, name_type, data_folder, ans_ex_path,
                         current_gid = read_g_gid
                         break
                 except EOFError:
+                    print("Graph/Name data incompatible.", flush=True)
                     sys.exit("Graph/Name data incompatible.")
 
         print(datetime.now(), f"evaluation process at {test_counter} | {qa_item_id}", flush=True)
@@ -249,8 +283,8 @@ def eval_llm(query_type, graph_shape_group, name_type, data_folder, ans_ex_path,
                 case "cf_cf_infer":
                     result = validate_cf_tasks(name_dict[name_type], query_dict['cf_query'], query_dict['cf_assign'], qa_dict['extracted_answer'])
 
-        # print(f"======={qa_item_id}=======", flush=True)
-        # print(f"eval result:\n {result}\n", flush=True)
+        print(f"======={qa_item_id}=======", flush=True)
+        print(f"eval result:\n {result}\n", flush=True)
         qa_dict['result'] = result
         f_out.write(json.dumps(qa_dict, ensure_ascii=False) + '\n')
         f_out.flush()

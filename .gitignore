@@ -2,6 +2,7 @@
 *.env
 *.pkl
 *key*.json
+*.json
 *.png
 *.log
 *.pickle

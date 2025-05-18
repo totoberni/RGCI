@@ -421,6 +421,7 @@ def test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_ty
                             current_gid = read_g_gid
                             break
                     except EOFError:
+                        print("Data incompatible.", flush=True)
                         sys.exit("Data incompatible.")
 
             if query_filter(qid=query_item_id, gs=graph_shape, f_infer_history=f_infer_history):
@@ -463,25 +464,23 @@ def test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_ty
                 backoff_time = 10
                 res_text = "[Network Error]"
                 while retry_cnt < retry_threshold:
-                    try:
+                    try: # fails here. Why?
                         res_text = get_response(api_key, model, input_text)['choices'][0]['message']['content']
                         global_retried_cnt = 0
                         break
-                    except:
+                    except Exception as e:
+                        print(f"Error: {e}", flush=True)
                         time.sleep(backoff_time)
                         backoff_time *= 1.5
                         retry_cnt += 1
                         global_retried_cnt += 1
 
-                # print(f"======={query_item_id}=======", flush=True)
-                # print(f"query:\n {input_text}\n", flush=True)
-                # print(f"response:\n {res_text}\n", flush=True)
+                print(f"======={query_item_id}=======", flush=True)
+                print(f"query:\n {input_text}\n", flush=True)
+                print(f"response:\n {res_text}\n", flush=True)
                 response_item = {"query_id": query_item_id, "input_text": input_text, "query_text": query, "response_text": res_text}
                 f_out.write(json.dumps(response_item, ensure_ascii=False) + '\n')
                 f_out.flush()
-                
-                # Add delay between API calls to avoid rate limiting
-                time.sleep(10)
                 
                 if global_retried_cnt >= global_retry_threshold:
                     f_qd.close()
@@ -491,6 +490,7 @@ def test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_ty
                     sys.exit("Failed to connect to llm api after many retries.")
         
         except EOFError:
+            print("Data incompatible.", flush=True)
             f_qd.close()
             f_gd.close()
             f_nd.close()

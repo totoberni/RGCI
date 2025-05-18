@@ -5,10 +5,10 @@ This module centralizes all path-related configurations and operations to
 ensure consistent path handling throughout the application.
 """
 import os
-from dotenv import load_dotenv
+from src.utils.env_utils import load_env_variables
 
-# Load environment variables
-load_dotenv()
+# Load environment variables using our centralized utility function
+load_env_variables()
 
 # Define paths relative to project root
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))

@@ -36,22 +36,26 @@ def main():
     
     if args.action in ['generate', 'both']:
         print(f"Generating test data with settings index {args.settings_index}...")
-        # Import and run data generation with settings index
-        from src.entrypoints.run_data_gen import main as data_gen_main
-        # Set sys.argv for the import
+        # Import data generation function lazily to avoid circular imports
         orig_argv = sys.argv.copy()
         sys.argv = ['run_data_gen.py', str(args.settings_index)]
+        
+        # Use lazy import to avoid circular dependency
+        from src.entrypoints.run_data_gen import main as data_gen_main
         data_gen_main()
+        
         sys.argv = orig_argv
     
     if args.action in ['evaluate', 'both']:
         print(f"Running evaluation with settings index {args.settings_index}...")
-        # Import and run evaluation with settings index
-        from src.entrypoints.run_evaluation import main as eval_main
-        # Set sys.argv for the import
+        # Import evaluation function lazily to avoid circular imports
         orig_argv = sys.argv.copy()
         sys.argv = ['run_evaluation.py', str(args.settings_index)]
+        
+        # Use lazy import to avoid circular dependency
+        from src.entrypoints.run_evaluation import main as eval_main
         eval_main()
+        
         sys.argv = orig_argv
     
     print("\nCompleted!")

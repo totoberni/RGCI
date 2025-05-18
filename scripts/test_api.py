@@ -18,12 +18,19 @@ def test_api():
     
     # Get API key from environment variables
     api_key = os.environ.get('OPENAI_API_KEY')
+    extractor_api_key = os.environ.get('OPENAI_API_KEY_EXTRACTOR', '')
     
     # Print debug information
     print(f"API_HOST: {os.environ.get('API_HOST', 'Not set')}")
     print(f"USER_AGENT: {os.environ.get('USER_AGENT', 'Not set')}")
     print(f"CONTENT_TYPE: {os.environ.get('CONTENT_TYPE', 'Not set')}")
     print(f"API_KEY present: {bool(api_key)}")
+    print(f"EXTRACTOR_API_KEY present: {bool(extractor_api_key)}")
+    
+    # Print environment file path for debugging
+    env_path = os.path.join(project_root, 'config', '.env')
+    print(f"Environment file path: {env_path}")
+    print(f"Environment file exists: {os.path.exists(env_path)}")
     
     if not api_key:
         print("\nERROR: No OpenAI API key found. Please check your config/.env file.")

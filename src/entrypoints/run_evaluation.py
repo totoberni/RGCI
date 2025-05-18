@@ -12,21 +12,10 @@ from datetime import datetime
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 
-# Load environment variables from the correct location
-from src.utils.env_utils import load_env_variables
-load_env_variables()
-
 from src.tests.test_utils import test_llm
 from src.evaluation.eval_utils import extract_answer, eval_llm
 from src.core.settings import get_test_settings, DEFAULT_EXTRACTOR_MODEL
 from src.core.paths import GENERATED_DATA_DIR, PICKLE_DIR
-
-
-def run_test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_type, prompt, data_folder, output_path):
-    """Wrapper function to use test_llm from src.tests.test_utils"""
-    # Simply call the imported function with the same parameters
-    test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_type, prompt, data_folder, output_path)
-
 
 def main():
     if len(sys.argv) < 2:
@@ -63,25 +52,37 @@ def main():
                         print('─' * 60)
                         print(datetime.now(), f"currently at: {model} | {file_name}", flush=True)
                         
-                        print(datetime.now(), "start test...", flush=True)
-                        if settings[model]['test']:
-                            output_path = os.path.join(test_folder, f"{file_name}.json")
-                            run_test_llm(test_api_key, model, t, graph_shape_group, graph_shape, n, p, data_folder, output_path)
-                        print(datetime.now(), "test done", flush=True)
+                        # print(datetime.now(), "start test...", flush=True)
+                        # if settings[model]['test']:
+                        #     output_path = os.path.join(test_folder, f"{file_name}.json")
+                        #     test_llm(test_api_key, model, t, graph_shape_group, graph_shape, n, p, data_folder, output_path)
+                        # print(datetime.now(), "test done", flush=True)
                         
                         print(datetime.now(), "start answer extraction...", flush=True)
                         if settings[model]['ans_ex']:
                             res_path = os.path.join(test_folder, f"{file_name}.json")
                             output_path = os.path.join(ans_ex_folder, f"{file_name}.json")
-                            extract_answer(extractor_api_key, extractor_model, t, res_path, output_path)
-                        print(datetime.now(), "answer extraction done", flush=True)
+                            try:
+                                extract_answer(extractor_api_key, extractor_model, t, res_path, output_path)
+                                print(datetime.now(), "answer extraction done", flush=True)
+                            except FileNotFoundError as e:
+                                print(f"ERROR: File not found during extraction: {str(e)}")
+                                print(f"Missing file: {res_path}")
+                                print(f"Skipping to next task", flush=True)
+                                continue
                         
                         print(datetime.now(), "start evaluation...", flush=True)
                         if settings[model]['eval']:
                             ans_ex_path = os.path.join(ans_ex_folder, f"{file_name}.json")
                             output_path = os.path.join(eval_folder, f"{file_name}.json")
-                            eval_llm(t, graph_shape_group, n, data_folder, ans_ex_path, output_path)
-                        print(datetime.now(), "evaluation done", flush=True)
+                            try:
+                                eval_llm(t, graph_shape_group, n, data_folder, ans_ex_path, output_path)
+                                print(datetime.now(), "evaluation done", flush=True)
+                            except FileNotFoundError as e:
+                                print(f"ERROR: File not found during evaluation: {str(e)}")
+                                print(f"Missing file: {ans_ex_path}")
+                                print(f"Skipping to next task", flush=True)
+                                continue
 
     print('─' * 60)
     print(datetime.now(), "all finished", flush=True)

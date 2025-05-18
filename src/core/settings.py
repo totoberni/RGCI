@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
+from src.utils.env_utils import load_env_variables
 
-# Load environment variables in case they haven't been loaded already
-load_dotenv()
+# Load environment variables using our centralized utility function
+load_env_variables()
 
 # Import paths from the paths module
 from src.core.paths import (
@@ -19,20 +20,20 @@ from src.core.paths import (
 # Ensure directories exist
 ensure_directories()
 
-# Get API keys from environment variables with fallbacks to empty strings
-DEFAULT_API_KEY = os.environ.get('OPENAI_API_KEY', '')
-DEFAULT_EXTRACTOR_API_KEY = os.environ.get('OPENAI_API_KEY_EXTRACTOR', '')
-
 # Define default models for different roles
 DEFAULT_EXTRACTOR_MODEL = "gpt-4o"
 
 def get_test_settings(idx):
+    # Get API keys directly from environment to ensure we have the most current values
+    api_key = os.environ.get('OPENAI_API_KEY', '')
+    extractor_api_key = os.environ.get('OPENAI_API_KEY_EXTRACTOR', '')
+    
     settings = [
         {
             "gpt-3.5-turbo": {  # 0
                 "enable": True,
-                "test_api_key": DEFAULT_API_KEY,
-                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
+                "test_api_key": api_key,
+                "extractor_api_key": extractor_api_key,
                 "extractor_model": DEFAULT_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
@@ -55,8 +56,8 @@ def get_test_settings(idx):
         {
             "gpt-3.5-turbo-0125": {  # 1
                 "enable": True,
-                "test_api_key": DEFAULT_API_KEY,
-                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
+                "test_api_key": api_key,
+                "extractor_api_key": extractor_api_key,
                 "extractor_model": DEFAULT_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
@@ -73,9 +74,9 @@ def get_test_settings(idx):
         # Example configurations for other models
         {
             "gpt-4o": {  # 2 - GPT-4o example
-                "enable": False,  # Set to True to enable testing with this model
-                "test_api_key": DEFAULT_API_KEY,
-                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
+                "enable": True,  # Set to True to enable testing with this model
+                "test_api_key": api_key,
+                "extractor_api_key": extractor_api_key,
                 "extractor_model": DEFAULT_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
@@ -89,9 +90,9 @@ def get_test_settings(idx):
         },
         {
             "gpt-4": {  # 3 - GPT-4 example
-                "enable": False,
-                "test_api_key": DEFAULT_API_KEY,
-                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
+                "enable": True,
+                "test_api_key": api_key,
+                "extractor_api_key": extractor_api_key,
                 "extractor_model": DEFAULT_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
@@ -105,9 +106,9 @@ def get_test_settings(idx):
         },
         {
             "gpt-4-turbo": {  # 4 - GPT-4 Turbo example
-                "enable": False,
-                "test_api_key": DEFAULT_API_KEY,
-                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
+                "enable": True,
+                "test_api_key": api_key,
+                "extractor_api_key": extractor_api_key,
                 "extractor_model": DEFAULT_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",

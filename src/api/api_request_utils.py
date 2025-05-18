@@ -24,6 +24,10 @@ def get_response(api_key, model, content):
     Returns:
         dict: The response from the API
     """
+    # Check if API key is empty or None
+    if not api_key:
+        raise ValueError("API key is empty or not provided")
+    
     # Create OpenAI client with the provided API key and custom configuration
     client = OpenAI(
         api_key=api_key,
