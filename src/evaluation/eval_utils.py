@@ -4,6 +4,7 @@ import sys
 import pickle
 from datetime import datetime
 from src.api.api_request_utils import get_response
+from config.settings import DEFAULT_EXTRACTOR_MODEL
 
 
 def get_extract_prompt(query_type):
@@ -36,7 +37,11 @@ If you can't extract, please output "Unknown". Do not output other redundant con
     return extract_prompt
 
 
-def extract_answer(api_key, model, query_type, input_json_path, output_json_path):
+def extract_answer(api_key, model=None, query_type=None, input_json_path=None, output_json_path=None):
+    # Default to DEFAULT_EXTRACTOR_MODEL if model is not provided
+    if model is None:
+        model = DEFAULT_EXTRACTOR_MODEL
+        
     with open(input_json_path, 'r', encoding='utf-8') as f_in:
         lines = f_in.readlines()
     f_out = open(output_json_path, 'w', encoding='utf-8')

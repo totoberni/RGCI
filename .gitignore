@@ -1,0 +1,9 @@
+*venv*/*
+*.env
+*.pkl
+*key*.json
+*.png
+*.log
+*.pickle
+*pickle*
+*sk*-*
