@@ -55,6 +55,9 @@ def extract_answer(api_key, model=None, query_type=None, input_json_path=None, o
         print(datetime.now(), f"Extracting at {current_cnt} | {res_dict['query_id']}", flush=True)
         current_cnt += 1
         
+        # Add delay between API calls to avoid rate limiting
+        time.sleep(2)
+        
         retry_cnt = 0
         backoff_time = 10
         extracted_text = "[Network Error]"
@@ -62,10 +65,15 @@ def extract_answer(api_key, model=None, query_type=None, input_json_path=None, o
             input_text = get_extract_prompt(query_type) + "\n\n" + res_dict['query_text'] + "\nAnswer:\n" + res_dict['response_text']
             while retry_cnt < retry_threshold:
                 try:
-                    extracted_text = get_response(api_key, model, input_text)['choices'][0]['message']['content']
+                    # Add debugging info
+                    print(f"Making API call with key: {api_key[:5]}...{api_key[-5:] if api_key else 'None'}")
+                    print(f"Using model: {model}")
+                    response = get_response(api_key, model, input_text)
+                    extracted_text = response['choices'][0]['message']['content']
                     global_retried_cnt = 0
                     break
-                except:
+                except Exception as e:
+                    print(f"API Error: {str(e)}")
                     time.sleep(backoff_time)
                     backoff_time *= 1.5
                     retry_cnt += 1

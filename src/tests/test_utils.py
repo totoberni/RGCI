@@ -479,6 +479,10 @@ def test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_ty
                 response_item = {"query_id": query_item_id, "input_text": input_text, "query_text": query, "response_text": res_text}
                 f_out.write(json.dumps(response_item, ensure_ascii=False) + '\n')
                 f_out.flush()
+                
+                # Add delay between API calls to avoid rate limiting
+                time.sleep(10)
+                
                 if global_retried_cnt >= global_retry_threshold:
                     f_qd.close()
                     f_gd.close()
