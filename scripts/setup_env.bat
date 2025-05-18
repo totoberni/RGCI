@@ -20,13 +20,28 @@ if errorlevel 1 (
 
 :: Install requirements
 echo Installing requirements...
-pip install -r requirements.txt
+pip install -r config\requirements.txt
 
 :: Create .env file if it doesn't exist
-if not exist .env if exist .env.example (
-    echo Creating .env file from example...
-    copy .env.example .env
-    echo Please update the .env file with your API keys.
+if not exist config\.env (
+    echo Creating .env file in config directory...
+    
+    :: Create an example .env file content
+    (
+    echo # OpenAI API Keys
+    echo OPENAI_API_KEY=sk-your-openai-api-key
+    echo OPENAI_API_KEY_EXTRACTOR=sk-your-openai-api-key-for-extraction
+    echo.
+    echo # API Connection Settings
+    echo API_HOST=api.openai.com
+    echo USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+    echo CONTENT_TYPE=application/json
+    echo.
+    echo # Output Directories
+    echo OUTPUT_PATH=./generated_data
+    ) > config\.env.template
+    
+    echo Please update the config\.env file with your API keys.
 )
 
 echo.

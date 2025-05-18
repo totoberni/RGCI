@@ -52,6 +52,7 @@ graphviz>=0.20.1
 matplotlib>=3.7.1
 pandas>=2.0.0
 python-dotenv>=1.0.0
+openai ~=1.0.0
 ```
 
 ### Environment Configuration
@@ -67,6 +68,15 @@ scripts/setup_env.bat
 ```bash
 ./scripts/setup_env.sh
 ```
+
+### Getting an OpenAI API Key
+
+This project uses the OpenAI API for evaluating LLMs. To obtain an API key:
+
+1. Create an account on the [OpenAI platform](https://platform.openai.com/signup)
+2. Navigate to the [API keys page](https://platform.openai.com/account/api-keys)
+3. Click "Create new secret key" and provide a name for your key
+4. Copy the key immediately (you won't be able to see it again)
 
 ### API Configuration
 
@@ -85,6 +95,8 @@ CONTENT_TYPE=application/json
 # Output Directories
 OUTPUT_PATH=./generated_data
 ```
+
+The setup script will create a template `.env` file that you can customize with your API keys.
 
 ## Usage
 
@@ -152,4 +164,8 @@ The data generation process can be configured through `config/settings.py`:
 
 ## API Integration
 
-The system is designed to work with OpenAI API-compatible models. Configure the API settings in the `.env` file in the `config` directory and ensure the model configurations in `config/settings.py` are properly set up. 
+The system uses the official OpenAI Python SDK to interact with models. The framework is configured to support the following models:
+- GPT-3.5-turbo 
+- GPT-4 models (when available)
+
+Configure the API settings in the `.env` file in the `config` directory and ensure the model configurations in `config/settings.py` are properly set up. 

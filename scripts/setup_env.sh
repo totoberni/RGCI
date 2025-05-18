@@ -25,13 +25,28 @@ fi
 
 # Install requirements
 echo -e "${YELLOW}Installing requirements...${NC}"
-pip install -r requirements.txt
+pip install -r config/requirements.txt
 
 # Create .env file if it doesn't exist
-if [ ! -f ".env" ] && [ -f ".env.example" ]; then
-    echo -e "${YELLOW}Creating .env file from example...${NC}"
-    cp .env.example .env
-    echo -e "${YELLOW}Please update the .env file with your API keys.${NC}"
+if [ ! -f "config/.env" ]; then
+    echo -e "${YELLOW}Creating .env file in config directory...${NC}"
+    
+    # Create the .env.template file with template values
+    cat > config/.env.template << EOF
+# OpenAI API Keys
+OPENAI_API_KEY=sk-your-openai-api-key
+OPENAI_API_KEY_EXTRACTOR=sk-your-openai-api-key-for-extraction
+
+# API Connection Settings
+API_HOST=api.openai.com
+USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+CONTENT_TYPE=application/json
+
+# Output Directories
+OUTPUT_PATH=./generated_data
+EOF
+    
+    echo -e "${YELLOW}Please update the config/.env file with your API keys.${NC}"
 fi
 
 echo -e "${GREEN}Environment setup complete!${NC}"

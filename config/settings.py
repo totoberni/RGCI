@@ -12,13 +12,17 @@ GRAPH_PNG_DIR = os.path.join(GENERATED_DATA_DIR, 'graph_png')
 os.makedirs(PICKLE_DIR, exist_ok=True)
 os.makedirs(GRAPH_PNG_DIR, exist_ok=True)
 
+# Get API keys from environment variables with fallbacks to empty strings
+DEFAULT_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+DEFAULT_EXTRACTOR_API_KEY = os.environ.get('OPENAI_API_KEY_EXTRACTOR', '')
+
 def get_test_settings(idx):
     settings = [
         {
             "gpt-3.5-turbo": {  # 0
                 "enable": True,
-                "test_api_key": "",
-                "extractor_api_key": "",
+                "test_api_key": DEFAULT_API_KEY,
+                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
                 "graph_shape": ["00", "01", "02"],
@@ -40,8 +44,8 @@ def get_test_settings(idx):
         {
             "gpt-3.5-turbo": {  # 1
                 "enable": True,
-                "test_api_key": "",
-                "extractor_api_key": "",
+                "test_api_key": DEFAULT_API_KEY,
+                "extractor_api_key": DEFAULT_EXTRACTOR_API_KEY,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
                 "graph_shape": ["00", "01", "02"],
