@@ -5,6 +5,8 @@ import pickle
 from datetime import datetime
 from src.api.api_request_utils import get_response
 from src.core.settings import DEFAULT_EXTRACTOR_MODEL
+from src.core.paths import normalize_path, safe_join_path, wait_for_file
+import os
 
 
 def get_extract_prompt(query_type):
@@ -42,22 +44,17 @@ def extract_answer(api_key, model=None, query_type=None, input_json_path=None, o
     if model is None:
         model = DEFAULT_EXTRACTOR_MODEL
     
-    # Add retry mechanism for file opening
-    max_file_retries = 10
-    file_retry_count = 0
-    lines = None
+    # Normalize paths
+    input_json_path = normalize_path(input_json_path)
+    output_json_path = normalize_path(output_json_path)
     
-    while file_retry_count < max_file_retries:
-        try:
-            with open(input_json_path, 'r', encoding='utf-8') as f_in:
-                lines = f_in.readlines()
-            break  # Successfully opened the file, exit the retry loop
-        except FileNotFoundError as e:
-            file_retry_count += 1
-            if file_retry_count >= max_file_retries:
-                raise FileNotFoundError(f"Failed to open file after {max_file_retries} attempts: {str(e)}")
-            print(f"File not found, retrying ({file_retry_count}/{max_file_retries}): {input_json_path}")
-            time.sleep(5)  # Wait 5 seconds before retry
+    # Wait for the input file to exist
+    if not wait_for_file(input_json_path):
+        raise FileNotFoundError(f"Input file not available after multiple retries: {input_json_path}")
+    
+    # Open input file
+    with open(input_json_path, 'r', encoding='utf-8') as f_in:
+        lines = f_in.readlines()
     
     f_out = open(output_json_path, 'w', encoding='utf-8')
     retry_threshold = 3
@@ -199,9 +196,24 @@ def validate_cf_tasks(name_list, query_idx, gt_assign, extracted_answer):
 
 
 def eval_llm(query_type, graph_shape_group, name_type, data_folder, ans_ex_path, output_path):
-    f_qd = open(data_folder + "/" + query_type.split("_")[0] + "_query_data_" + graph_shape_group + ".pkl", 'rb')
-    f_nd = open(data_folder + "/node_name_data_" + graph_shape_group + ".pkl", 'rb')
-    f_gd = open(data_folder + "/graph_data_" + graph_shape_group + ".pkl", 'rb')
+    # Normalize paths
+    data_folder = normalize_path(data_folder)
+    ans_ex_path = normalize_path(ans_ex_path)
+    output_path = normalize_path(output_path)
+    
+    # Construct paths using safe_join_path
+    f_qd_path = safe_join_path(data_folder, f"{query_type.split('_')[0]}_query_data_{graph_shape_group}.pkl")
+    f_nd_path = safe_join_path(data_folder, f"node_name_data_{graph_shape_group}.pkl")
+    f_gd_path = safe_join_path(data_folder, f"graph_data_{graph_shape_group}.pkl")
+    
+    # Wait for the answer extraction file to exist
+    if not wait_for_file(ans_ex_path):
+        raise FileNotFoundError(f"Answer extraction file not available after multiple retries: {ans_ex_path}")
+    
+    # Open necessary files
+    f_qd = open(f_qd_path, 'rb')
+    f_nd = open(f_nd_path, 'rb')
+    f_gd = open(f_gd_path, 'rb')
     f_out = open(output_path, 'w', encoding='utf-8')
 
     test_counter = 0
@@ -213,23 +225,9 @@ def eval_llm(query_type, graph_shape_group, name_type, data_folder, ans_ex_path,
         if name_type != "specific":
             name_type = name_type + "_c"
 
-    # Add retry mechanism for file opening
-    max_file_retries = 10
-    file_retry_count = 0
-    lines = None
+    with open(ans_ex_path, 'r', encoding='utf-8') as f_in:
+        lines = f_in.readlines()
     
-    while file_retry_count < max_file_retries:
-        try:
-            with open(ans_ex_path, 'r', encoding='utf-8') as f_in:
-                lines = f_in.readlines()
-            break  # Successfully opened the file, exit the retry loop
-        except FileNotFoundError as e:
-            file_retry_count += 1
-            if file_retry_count >= max_file_retries:
-                raise FileNotFoundError(f"Failed to open file after {max_file_retries} attempts: {str(e)}")
-            print(f"File not found, retrying ({file_retry_count}/{max_file_retries}): {ans_ex_path}")
-            time.sleep(5)  # Wait 5 seconds before retry
-
     if query_type[:4] == "conf":
         id_entry = "conf_id"
     else:

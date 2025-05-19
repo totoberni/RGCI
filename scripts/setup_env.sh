@@ -43,7 +43,9 @@ USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 CONTENT_TYPE=application/json
 
 # Output Directories
-OUTPUT_PATH=./generated_data
+# To customize data location, specify a custom path. Don't include 'generated_data' in this path
+# as it will be added automatically by the framework.
+OUTPUT_PATH=data
 EOF
     
     echo -e "${YELLOW}Please update the config/.env file with your API keys.${NC}"

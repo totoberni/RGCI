@@ -38,7 +38,9 @@ if not exist config\.env (
     echo CONTENT_TYPE=application/json
     echo.
     echo # Output Directories
-    echo OUTPUT_PATH=./generated_data
+    echo # To customize data location, specify a custom path. Don't include 'generated_data' in this path
+    echo # as it will be added automatically by the framework.
+    echo OUTPUT_PATH=data
     ) > config\.env.template
     
     echo Please update the config\.env file with your API keys.

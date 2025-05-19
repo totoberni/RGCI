@@ -13,6 +13,7 @@ from src.core.conf_utils import dict2text as conf_d2t
 from src.core.cf_utils import dict2text as cf_d2t
 from src.api.api_request_utils import get_response
 from src.core.settings import DEFAULT_EXTRACTOR_MODEL
+from src.core.paths import normalize_path, safe_join_path
 
 
 def query_filter(qid, gs=None, gp=None, gi=None, f_infer_history=[]):
@@ -384,10 +385,19 @@ def test_llm(api_key, model, query_type, graph_shape_group, graph_shape, name_ty
     # Use DEFAULT_EXTRACTOR_MODEL as fallback if model parameter is None
     if model is None:
         model = DEFAULT_EXTRACTOR_MODEL
-        
-    f_qd = open(data_folder + "/" + query_type.split("_")[0] + "_query_data_" + graph_shape_group + ".pkl", 'rb')
-    f_nd = open(data_folder + "/node_name_data_" + graph_shape_group + ".pkl", 'rb')
-    f_gd = open(data_folder + "/graph_data_" + graph_shape_group + ".pkl", 'rb')
+    
+    # Normalize paths
+    data_folder = normalize_path(data_folder)
+    output_path = normalize_path(output_path)
+    
+    # Construct paths using safe_join_path
+    f_qd_path = safe_join_path(data_folder, f"{query_type.split('_')[0]}_query_data_{graph_shape_group}.pkl")
+    f_nd_path = safe_join_path(data_folder, f"node_name_data_{graph_shape_group}.pkl")
+    f_gd_path = safe_join_path(data_folder, f"graph_data_{graph_shape_group}.pkl")
+    
+    f_qd = open(f_qd_path, 'rb')
+    f_nd = open(f_nd_path, 'rb')
+    f_gd = open(f_gd_path, 'rb')
     f_out = open(output_path, 'w', encoding='utf-8')
 
     test_counter = 0
