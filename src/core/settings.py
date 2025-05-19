@@ -22,6 +22,7 @@ ensure_directories()
 
 # Define default models for different roles
 DEFAULT_EXTRACTOR_MODEL = "gpt-4o"
+SECONDARY_EXTRACTOR_MODEL = "o4-mini"
 
 def get_test_settings(idx):
     # Get API keys directly from environment to ensure we have the most current values
@@ -54,17 +55,23 @@ def get_test_settings(idx):
             }
         },
         {
-            "gpt-3.5-turbo-0125": {  # 1
+            "gpt-3.5-turbo": {  # 1 with o4-mini
                 "enable": True,
                 "test_api_key": api_key,
                 "extractor_api_key": extractor_api_key,
-                "extractor_model": DEFAULT_EXTRACTOR_MODEL,
+                "extractor_model": SECONDARY_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
                 "graph_shape": ["00", "01", "02"],
                 "name_type": ["bio", "che", "eco", "phy"],
                 "prompt": [
                     "zero_shot",
+                    "one_shot",
+                    "two_shot",
+                    "zero_cot",
+                    "one_cot",
+                    "two_cot",
+                    "mis_hint",
                 ],
                 "test": True,
                 "ans_ex": True,
@@ -93,7 +100,7 @@ def get_test_settings(idx):
                 "enable": True,
                 "test_api_key": api_key,
                 "extractor_api_key": extractor_api_key,
-                "extractor_model": DEFAULT_EXTRACTOR_MODEL,
+                "extractor_model": "DEFAULT_EXTRACTOR_MODEL",
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
                 "graph_shape": ["00", "01", "02"],

@@ -196,6 +196,25 @@ Two types of models are used in the evaluation process:
 1. **Testing Models**: These are the models being evaluated on causal reasoning tasks (e.g., GPT-3.5-turbo, GPT-4, etc.)
 2. **Extractor Model**: A separate model (typically GPT-4o) used to extract structured answers from the testing models' responses
 
+### Parallel Model Evaluation
+
+The system supports running multiple evaluation instances with the same model name but different configurations:
+
+- When running an evaluation, if a result directory for the specified model already exists, a new unique directory name is automatically created (e.g., `gpt-3.5-turbo1`, `gpt-3.5-turbo2`)
+- This allows parallel testing of the same model with different extractors or settings without overwriting previous results
+- The naming pattern follows `model_name` → `model_name1` → `model_name2` and so on
+
+To run parallel evaluations:
+
+```bash
+# Run first evaluation with index 0
+python -m src.entrypoints.run_evaluation 0
+
+# Simultaneously run another evaluation with index 1
+# Results will be stored in a separate directory
+python -m src.entrypoints.run_evaluation 1
+```
+
 ### Configuring Models
 
 Models and their settings are configured in `src/core/settings.py` in the `get_test_settings()` function:

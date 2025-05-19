@@ -66,13 +66,33 @@ def get_model_result_dirs(model_name):
     Get the directory paths for test, answer extraction, and evaluation results
     for a specific model.
     
+    If a directory for the given model already exists, a unique name will be created
+    by appending a number (e.g., model_name1, model_name2, etc.).
+    
     Returns:
         tuple: (model_dir, test_dir, ans_ex_dir, eval_dir)
     """
-    model_dir = safe_join_path(RESULT_DIR, model_name)
+    # Start with the original model name
+    unique_model_name = model_name
+    base_model_dir = safe_join_path(RESULT_DIR, model_name)
+    
+    # Check if the directory exists and find a unique name if needed
+    counter = 1
+    while os.path.exists(base_model_dir):
+        unique_model_name = f"{model_name}{counter}"
+        base_model_dir = safe_join_path(RESULT_DIR, unique_model_name)
+        counter += 1
+    
+    # Now use the unique model name to create the paths
+    model_dir = base_model_dir
     test_dir = safe_join_path(model_dir, 'test')
     ans_ex_dir = safe_join_path(model_dir, 'ans_ex')
     eval_dir = safe_join_path(model_dir, 'eval')
+    
+    # Log if we had to create a unique name
+    if unique_model_name != model_name:
+        print(f"Directory for model '{model_name}' already exists. Using '{unique_model_name}' instead.", flush=True)
+    
     return model_dir, test_dir, ans_ex_dir, eval_dir
 
 def get_file_path(base_dir, task, graph_shape_group, name_type, prompt_type, file_ext="json"):
@@ -119,6 +139,32 @@ def wait_for_file(file_path, max_retries=10, delay=5):
     
     return False
 
+def get_model_eval_dir(model_name):
+    """
+    Get the evaluation results directory for a specific model.
+    
+    Args:
+        model_name: Name of the model
+    
+    Returns:
+        str: Path to the evaluation directory
+    """
+    model_dir = safe_join_path(RESULT_DIR, model_name)
+    return safe_join_path(model_dir, 'eval')
+
+def get_available_models():
+    """
+    Get a list of all models with result directories.
+    
+    Returns:
+        list: Names of models with result directories
+    """
+    if not os.path.exists(RESULT_DIR):
+        return []
+    
+    return [d for d in os.listdir(RESULT_DIR) 
+            if os.path.isdir(safe_join_path(RESULT_DIR, d))]
+
 def ensure_directories():
     """Ensure all required directories exist, creating them if necessary."""
     base_dirs = [PICKLE_DIR, GRAPH_PNG_DIR, NAME_DATA_DIR, RESULT_DIR]
@@ -147,5 +193,7 @@ __all__ = [
     'get_model_result_dirs',
     'get_file_path',
     'wait_for_file',
+    'get_model_eval_dir',
+    'get_available_models',
     'ensure_directories',
 ] 

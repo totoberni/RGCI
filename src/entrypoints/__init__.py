@@ -1,14 +1,22 @@
 """
-Entry point scripts for RGCI framework
+Entry point modules for the RGCI framework.
+
+This package contains the main execution scripts for running different aspects
+of the framework, including data generation, evaluation, and testing.
 """
 
-# Use function references to avoid circular imports
+from src.entrypoints.run_data_gen import main as run_data_gen
+from src.entrypoints.run_evaluation import main as run_evaluation
+from src.entrypoints.run_tests import main as run_tests
+from src.entrypoints.run_rgci import main as run_rgci
+from src.entrypoints.eval_results_analyzer import main as run_analysis
+
 __all__ = [
-    'run_data_gen_main',
-    'run_evaluation_main',
-    'run_rgci_main',
-    'print_header',
-    'run_tests_main'
+    'run_data_gen',
+    'run_evaluation',
+    'run_tests',
+    'run_rgci',
+    'run_analysis'
 ]
 
 # Functions to lazily import and return the main functions

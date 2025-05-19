@@ -129,3 +129,9 @@ def get_size(obj, seen=None):
     elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
         size += sum([get_size(i, seen) for i in obj])
     return size
+
+def read_jsonl(file_path):
+    """Read a JSONL file and return a list of dictionaries."""
+    import json
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return [json.loads(line) for line in f]
