@@ -22,7 +22,7 @@ ensure_directories()
 
 # Define default models for different roles
 DEFAULT_EXTRACTOR_MODEL = "gpt-4o"
-SECONDARY_EXTRACTOR_MODEL = "o4-mini"
+SECONDARY_EXTRACTOR_MODEL = "o3-mini"
 
 def get_test_settings(idx):
     # Get API keys directly from environment to ensure we have the most current values

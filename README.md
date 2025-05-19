@@ -103,6 +103,31 @@ OPENAI_API_KEY_EXTRACTOR=sk-your-openai-api-key-for-extraction
 
 The setup script will create a template `.env` file that you can customize with your API keys.
 
+### Testing API Connectivity
+
+To verify that your API keys are working correctly and to test connectivity with the OpenAI models:
+
+```bash
+# Test the base GPT-3.5-turbo model and all extractor models
+python scripts/test_api.py
+
+# Test with just the default extractor model (gpt-4o)
+python scripts/test_api.py --model default
+
+# Test with just the secondary extractor model (gpt-4o-mini)
+python scripts/test_api.py --model secondary
+
+# Test with a specific model
+python scripts/test_api.py --model gpt-4
+```
+
+This tool helps verify that:
+- Your API keys are valid
+- The environment variables are loaded correctly
+- The specified models are accessible through the API
+
+If you encounter any errors, the script provides detailed debug information to help troubleshoot connectivity issues.
+
 ### Path Configuration
 
 The framework uses a centralized path management system in `src/core/paths.py`. You can customize where data is stored by setting the `OUTPUT_PATH` environment variable in your `.env` file:
