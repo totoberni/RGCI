@@ -35,7 +35,7 @@ def get_test_settings(idx):
                 "enable": True,
                 "test_api_key": api_key,
                 "extractor_api_key": extractor_api_key,
-                "extractor_model": DEFAULT_EXTRACTOR_MODEL,
+                "extractor_model": SECONDARY_EXTRACTOR_MODEL,
                 "task": ["conf_ce_path", "conf_conf_ctrl", "cf_f_infer", "cf_cf_infer"],
                 "graph_shape_group": "00",
                 "graph_shape": ["00", "01", "02"],
