@@ -8,6 +8,7 @@ This repository implements the replication of the GCI (Graph-based Causal Infere
 RGCI/
 ├── config/                    # Configuration settings
 │   ├── __init__.py            # Package initialization and environment loading
+│   ├── requirements.txt       # Python dependencies
 │   └── .env                   # Environment variables (API keys, etc.)
 ├── scripts/                   # Helper scripts
 │   ├── setup_env.bat          # Windows environment setup
@@ -22,13 +23,16 @@ RGCI/
 │   │   ├── settings.py        # Configuration parameters
 │   │   ├── graph_utils.py     # Graph generation utilities
 │   │   ├── conf_utils.py      # Confounding reasoning utilities
-│   │   └── cf_utils.py        # Counterfactual reasoning utilities
+│   │   ├── cf_utils.py        # Counterfactual reasoning utilities
+│   │   ├── compare_eval.py    # Extractor bias analysis utilities
+│   │   └── paths.py           # Path management utilities
 │   ├── data/                  # Input data for the system
 │   │   ├── generated_data/    # Generated intermediate data
 │   │   │   ├── pickle/        # Serialized data files
 │   │   │   ├── graph_png/     # Visualized causal graphs
 │   │   │   └── result/        # Evaluation results
-│   │   └── name_data/         # Domain-specific entity names for causal graph nodes
+│   │   ├── name_data/         # Domain-specific entity names for causal graph nodes
+│   │   └── compare_data/      # Extractor comparison analysis results
 │   ├── entrypoints/           # Entry point scripts for running the system
 │   │   ├── run_data_gen.py    # Data generation script
 │   │   ├── run_evaluation.py  # Evaluation script
@@ -52,7 +56,7 @@ RGCI/
 Install dependencies using:
 
 ```bash
-pip install -r requirements.txt
+pip install -r config/requirements.txt
 ```
 
 The requirements include:
@@ -62,7 +66,9 @@ graphviz>=0.20.1
 matplotlib>=3.7.1
 pandas>=2.0.0
 python-dotenv>=1.0.0
-openai~=1.0.0
+scipy
+openai
+tabulate
 ```
 
 ### Environment Configuration
@@ -174,6 +180,25 @@ Test LLMs on causal reasoning tasks:
 python -m src.entrypoints.run_evaluation <settings_index>
 ```
 
+#### 3. Analyze Extractor Bias
+
+Compare the performance of different extractor models to detect systematic biases:
+
+```bash
+# Run from the src directory
+cd src
+python core/compare_eval.py
+
+# Or run from the project root
+python -m src.core.compare_eval
+```
+
+This analysis tool:
+- Compares evaluation results from different extractor models (e.g., GPT-4o vs o3-mini)
+- Performs statistical tests to detect significant differences
+- Generates visualizations showing performance comparisons
+- Saves results to `src/data/compare_data/`
+
 ### Running Tests
 
 To run tests for the framework:
@@ -209,6 +234,105 @@ The system supports four main causal reasoning task types:
 - **conf_conf_ctrl**: Controlling for confounders
 - **cf_f_infer**: Factual inference
 - **cf_cf_infer**: Counterfactual inference
+
+## Extractor Bias Analysis
+
+The framework includes a tool for analyzing potential biases introduced by different extractor models. This is important because the choice of extractor model can significantly impact evaluation results.
+
+### Prerequisites
+
+Before running the extractor comparison analysis:
+1. You must have completed evaluations with at least two different extractor models
+2. The evaluation results should be in `src/data/generated_data/result/` directory
+3. Each model's results should be in separate folders (e.g., `gpt-3.5-turbo` and `gpt-3.5-turbo1`)
+
+### Running Extractor Comparison
+
+To compare the performance of different extractor models:
+
+```bash
+cd src
+python core/compare_eval.py
+```
+
+The script will:
+- Automatically detect evaluation results from different extractors
+- Load and compare results for common tasks
+- Perform statistical analysis
+- Generate visualizations and reports
+
+### Understanding the Results
+
+The analysis provides several key metrics:
+
+1. **Statistical Tests**:
+   - **Paired t-test**: Tests if the mean difference between extractors is significant
+   - **Wilcoxon signed-rank test**: Non-parametric alternative for robustness
+   - **Cohen's d**: Measures the effect size of the difference
+
+2. **Performance Metrics**:
+   - Overall accuracy for each extractor
+   - Task-specific accuracy comparisons
+   - True/false count distributions
+
+3. **Bias Patterns**:
+   - Identifies which tasks show the largest bias
+   - Shows consistency of bias across different prompt types
+
+### Analysis Output
+
+The analysis generates two files in `src/data/compare_data/`:
+
+1. **extractor_comparison.png**: A comprehensive visualization with four subplots:
+   - Side-by-side accuracy comparison by task
+   - True/false count distributions
+   - Accuracy difference plot
+   - Overall statistics summary
+
+2. **analysis_report.md**: A markdown report containing:
+   - Executive summary of findings
+   - Overall performance metrics
+   - Task-by-task comparison
+   - Statistical analysis results
+   - Model comparison summary
+
+### Example Use Case
+
+```bash
+# Step 1: Run evaluation with GPT-4o as extractor (settings index 0)
+python -m src.entrypoints.run_evaluation 0
+
+# Step 2: Run evaluation with o3-mini as extractor (settings index 1)
+python -m src.entrypoints.run_evaluation 1
+
+# Step 3: Compare the results
+cd src
+python core/compare_eval.py
+```
+
+### Key Findings from Analysis
+
+The analysis typically reveals:
+- Whether there's a systematic bias between extractors
+- Which tasks show the largest differences (often Chain-of-Thought tasks)
+- Statistical significance of the differences (p-values)
+- Effect size of the bias (Cohen's d)
+
+### Implications for Research
+
+When conducting causal reasoning evaluations:
+1. **Standardize Extractor Choice**: Use the same extractor model across all experiments
+2. **Document Extractor Model**: Always report which extractor was used in research papers
+3. **Consider Bias**: Be aware that extractor choice can impact results by 3-5% or more
+4. **Validate Results**: Consider using multiple extractors and comparing results
+
+### Customizing the Analysis
+
+To modify the extractor comparison analysis, edit `src/core/compare_eval.py`:
+- Change the paths to compare different model results
+- Modify visualization styles or add new plots
+- Add additional statistical tests or metrics
+- Customize the report format
 
 ## Model Configuration and Customization
 
